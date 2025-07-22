@@ -1,0 +1,19 @@
+define function !!setpurpofsite()
+
+    !sites = array()
+
+    if !!CE.type.eq('SITE') then 
+        !sites.append(!!CE.name)
+    else 
+        if  !!Alert.confirm('OK to set purp to all Design Sites').eq('YES') then
+            var !sites collect all sites
+        endif
+    endif
+    
+    do !site values !sites 
+        if !site.dbref().dbname.split('/')[2].eq('DESI') then
+            !site.dbref().purp = !site.dbref().name.split('-')[2]
+        endif
+    enddo
+
+endfunction

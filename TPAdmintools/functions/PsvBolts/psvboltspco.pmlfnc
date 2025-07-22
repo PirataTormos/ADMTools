@@ -1,0 +1,61 @@
+define function !!psvboltspco()
+
+
+    if !!CE.type.eq('SBOL') then
+
+        !spec = !!alert.input('Write the spec in which to generate the SPCO','/')
+        if mat(!spec,'/') EQ 0 then
+            !spec  = '/' + !spec
+        endif
+
+        if !!tpspecexist(!spec).eq(TRUE) then
+
+
+            !bltref = !!CE.name
+
+            !nonpsvboltsplit = !!CE.name.split('_')
+            !nonpsvbolt = ''
+            !tag = !nonpsvboltsplit[4]
+            do !i from 1 to 5 by 1
+                if !i eq 4 then
+                    skip
+                endif
+                !nonpsvbolt = !nonpsvbolt & !nonpsvboltsplit[!i]
+                handle (2,752)
+                    !!alert.error('this is not a psv bolt')
+                endhandle
+                if !i eq 5 then
+                    skip
+                endif
+                !nonpsvbolt =  !nonpsvbolt & '_'
+            enddo
+            !oldspeco = !spec & !nonpsvbolt
+            !!CE = !oldspeco.dbref()
+            var !bore answer of owner of owner
+            var !stype1 stype 
+            !stype = !stype1 & '_' & !tag
+            var !shop 'FALSE'
+            var !catref catref
+            var !detref detref
+            var !bltref $!bltref
+
+                SPECONMODE
+                OLD SPECIFICATION $!spec
+                HEADING                                                                                                                                                                                                 
+                TYPE NAME PBOR0 STYP SHOP CATREF DETAIL MATXT CMPREF BLTREF                                                                                                                                             
+                DEFAULTS                                                                                                                                                                                                
+                - - - = =   
+                BOLT *$!bltref $!bore TEXT'$!stype' FALSE $!catref $!detref =0 =0 $!bltref
+                EXIT
+        else       
+            !!alert.error('Spec not found')
+        endif
+    else 
+
+        !!alert.error('Wrong element type')
+
+    endif
+endfunction
+
+
+-- añadir verificaciones de spec y de entrada de bolt (las segunda puede hacerse en el forulario)

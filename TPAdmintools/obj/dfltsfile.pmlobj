@@ -1,0 +1,138 @@
+define object dfltsfile
+
+    member .content is array
+    member .fileobj is file
+    member .dirs is array
+    member .dir is string 
+
+    !project = current project
+    !session = current session
+    !!projectcode = !project.code()
+    !!currentmodule = !session.module()
+
+
+endobject
+
+define method .dfltsfile()
+
+
+
+    var !dirdflts evar 'AVEVA_DESIGN_DFLTS'
+    !this.dirs = !dirdflts.split(';')
+    !prdf = !!projectcode + 'dflts'
+
+    do !ndir index !this.dirs
+        !filena = !this.dirs[!ndir]
+        if matchwild(!filena,'*$!prdf*') then
+            !this.dir = !this.dirs[!ndir]
+            break
+        endif
+    enddo    
+
+endmethod
+
+define method .getdata() is array
+
+    if !this.fileobj.unset().eq(true) then
+        $P DFLTSFILE: No file object set
+        return array()
+    else
+        !this.content = !this.fileobj.readfile()
+        return !this.content
+    endif
+
+endmethod
+
+define method .CreateDfltsFile(!DfltsFileName is STRING)
+
+    !clarr = array()
+
+    !filena = !this.dir & '\' & '$!DfltsFileName'
+    !file = object file(!filena)
+    !file.writeFile('OVERWRITE',!clarr)
+    !this.fileobj = !file
+
+endmethod
+
+define method .Exists(!filetocheck is string) is BOOLEAN
+
+    !filena = !this.dir & '\' & '$!filetocheck'
+    !file = object file(!filena)
+    if !file.exists() then
+        return true
+    else 
+        return false
+    endif
+
+endmethod
+
+define method .asignfile(!filetoasign is string)
+
+
+    !filena = !this.dir & '\' & '$!filetoasign'
+
+    if !this.exists(!filetoasign).eq(TRUE) then
+        !file = object file(!filena)
+        !this.fileobj = !file
+    else 
+        $P DFLTSFILE: '$!filetoasign' does not exist in the dflts directory
+    endif
+
+endmethod
+
+
+define method .pushdata (!data is array)
+
+    if !this.fileobj.unset().eq(TRUE) then
+        $P DFLTS: 'No file set to push data, use .asignfile to set the file'
+    else 
+        !this.fileobj.writeFile('OVERWRITE',!data)
+    endif
+endmethod
+
+define method .help()
+
+    $P DFLTSFILE Object - Metodos y Miembros:
+    $P Members:
+    $P   .content   : array  - Contenido del archivo asignado.
+    $P   .fileobj   : file   - Objeto archivo actualmente asignado.
+    $P   .dirs      : array  - Lista de directorios de dflts.
+    $P   .dir       : string - Directorio dflts seleccionado.
+    $P
+    $P Metodos:
+    $P   .dfltsfile()
+    $P       - Descripcion : Inicializa el objeto y selecciona el directorio dflts correspondiente al proyecto.
+    $P       - Parametros  : Ninguno
+    $P       - Devuelve    : Nada
+    $P
+    $P   .getdata()
+    $P       - Descripcion : Devuelve el contenido del archivo asignado como array.
+    $P       - Parametros  : Ningunod
+    $P       - Devuelve    : array
+    $P
+    $P   .CreateDfltsFile(nombre is string)
+    $P       - Descripcion : Crea un archivo dflts vacio con el nombre indicado.
+    $P       - Parametros  : nombre (string)
+    $P       - Devuelve    : Nada
+    $P
+    $P   .Exists(nombre is string)
+    $P       - Descripcion : Verifica si existe el archivo dflts con el nombre indicado.
+    $P       - Parametros  : nombre (string)
+    $P       - Devuelve    : bool
+    $P
+    $P   .asignfile(nombre is string)
+    $P       - Descripcion : Asigna el archivo dflts indicado al objeto.
+    $P       - Parametros  : nombre (string)
+    $P       - Devuelve    : Nada
+    $P
+    $P   .pushdata(data is array)
+    $P       - Descripcion : Escribe el array 'data' en el archivo asignado.
+    $P       - Parametros  : data (array)
+    $P       - Devuelve    : Nada
+    $P
+    $P   .help()
+    $P       - Descripcion : Muestra esta ayuda.
+    $P       - Parametros  : Ninguno
+    $P       - Devuelve    : Nada
+
+endmethod

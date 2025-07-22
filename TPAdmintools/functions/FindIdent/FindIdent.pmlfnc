@@ -1,0 +1,92 @@
+define function !!Findident(!Ident is string )
+
+    -- 1. Buscar todos los SPCO con el IDENT dado
+    var !spcos coll all SPCO with :TP-IDENT EQ '$!Ident'
+
+    $P **** For Ident: $!Ident ****
+
+    -- 2. Si no se encuentra, mostrar mensaje de error
+    if ( !spcos.Unset() ) then
+        $P NOT FOUND SPCO IN CATALOG
+        $P   PROBLEM_INTERFACE:
+        $P      1.NOT FOUND IN .SPEC FILE
+        $P      2.DIMENSION NOT FOUND IN DIMTRANSFER
+        $P      3.DIMENSION FOUND IN DIMTRANSFER WITH ERROR
+        $P      4.DESCRIPCION NOT FOUND IN INTERFACE
+        $P      5.MATERIAL DESC OR WEIGTH NOT FOUND IN INTERFACE
+        $P      6.MISSING BOLTREF / BOLREF =0
+        $P   PLEASE INDICATE NEXT SENDING:
+    else
+
+        -- 3. Recorrer cada elemento encontrado
+        do !speco VALUES !spcos
+
+            -- 3.1. Nombre del objeto
+            !names = !speco.dbref().name
+
+            -- 3.2. Obtener tipo de stype
+            var !stype stype of $!speco
+            handle any
+                !stype='check'
+            endhandle
+
+            -- 3.3. Obtener tipo de gtype
+            var !gtype gtype of catref of $!speco  
+            handle any
+                !gtype='Check'
+            endhandle
+
+            -- 3.4. Obtener spec
+            var !spec spec of $!speco 
+            handle any
+                !spec='Check'
+            endhandle
+
+            -- 3.5. Grupo diámetros
+            var !p1bore p1bore of $!speco
+            handle any
+                !p1bore = '0mm'
+            endhandle
+
+            var !p2bore p2bore of $!speco
+            handle any
+                !p2bore = '0mm'
+            endhandle   
+
+            var !p3bore p3bore of $!speco
+            handle any
+                !p3bore = '0mm'
+            endhandle
+
+            -- 3.6. Parámetro de catálogo
+            var !param param of catref of $!speco   
+            handle any
+                !param='Check'
+            endhandle
+
+            -- 3.7. Nombre de categoría
+            var !cate NAME OF CATE OF CATREF of $!speco
+            !cate = SUBSTRING(!cate,16)
+            handle any
+                !param='Check'
+            endhandle
+
+            -- 3.8. Descripción
+            var !desc rtext of detref of $!speco
+            handle any
+                !param='Check'
+            endhandle
+
+            -- 4. Respuesta
+            $P SPCO = $!names  FOR IDENT = $!Ident
+            $P SPEC = $!spec ; HEADING = $!gtype; STYPE = $!stype ; DIAM = $!p1bore,$!p2bore,$!p3bore
+            $P PARAM = $!param ; $!cate
+            $P DESC = $!desc
+            $P ------------
+
+        enddo
+
+    endif
+
+            $P **** End of Search ****
+endfunction

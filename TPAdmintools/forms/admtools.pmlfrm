@@ -1,0 +1,182 @@
+setup form !!admtools dialog dock right
+
+    -- CONSTRUCTION MEMBERS
+
+    member .formod is string
+
+
+    !project = current project
+    !session = current session
+    !!projectcode = !project.code()
+    !!currentmodule = !session.module()
+
+    if !!currentmodule.eq('PARAGON') then
+        !this.formod = 'Paragon'
+    elseif !!currentmodule.eq('DESIGN') then
+        !this.formod = 'Design'
+    endif
+
+    -- CONSTRUCTOR
+
+    --!this.callback      = '!this.admtools()'
+    !this.cancelCall    = '!this.close()'
+    !this.formrevision  = 'V-0.1.2'
+    !this.formtitle     = 'ADMIN TOOLS - ' +  !this.formrevision + ' - ' + !this.formod
+
+
+    path down
+    vdist 0.2
+    hdist  1
+
+    !width = 30
+    !width2 = 14
+
+
+
+    if !!currentmodule.eq('PARAGON') then
+
+        frame .specdesc 'Specs'
+
+            text .ident 'Check Ident' callback '!this.checkident()' width 18 is string
+            vdist 0.4
+            button .changedesc 'Change Spec Descrpition' width $!width callback '!this.changedesc()'
+
+        exit
+
+        frame .custmization 'Customization'
+            button .launchcustomization 'Launch Customization' width $!width callback '!this.launchcustomization()'
+        exit
+
+        frame .loadspecbuttons 'Forms'
+
+            button .showdimtransfer 'Dim-Transfer' width $!width callback 'show !!dimtransfer'
+            button .showtpspec 'TPSpec'  width 14 callback 'show !!tpspec'
+            button .showtpcata 'TPCata' at xmax.showtpspec +1 ymin.showtpspec width 14 callback 'show !!tpcata'
+            button .showtpmarian 'TP MarianCheck'at xmin.showtpspec width $!width callback 'show !!tpmariancheck'
+
+        exit
+
+        frame .boltframe 'Bolts'
+
+        button .psvboltbutt 'PSV Bolt' width 14 callback '!this.psvboltmeth()'
+        button .psvboltspcobutt 'PSV Bolt SPCO' at xmax.psvboltbutt +1 ymin.psvboltbutt width 14 callback '!this.psvboltspecometh()'
+
+        exit
+
+        frame .GetWorkframe 'GetWork'
+
+            button .GetWorkSpec 'GetWork Spec' width 14
+            button .GetWorkCata 'GetWork Cata' at xmax.GetWorkSpec +1 ymin.GetWorkSpec width 14
+
+        exit
+
+
+    endif
+
+    if !!currentmodule.eq('DESIGN') then
+
+        frame .desfunctions '3D Organization'
+
+            button .setpurpbutt 'Set Purp' width $!width callback '!this.setpurp()'
+
+        exit
+
+    endif
+
+
+    frame .f1tolls 'Tools'
+        path right
+        button .exit 'Reload form' width $!width2 callback '!this.reloadform()'
+        button .butrehash 'PML Rehash All' width $!width2 callback '!this.rehash()'
+        path down 
+        button .test 'test' width $!width2 callback '!this.test()'
+
+    exit
+
+    -- MEMBERS
+    member .admdflts is dfltsfile
+    member .dfltsdata is array
+
+
+exit
+
+define method .admtools()
+
+    -- Asignar archivo dflts.
+    !Admdfltsfile = 'admintools.ini'
+
+    !this.admdflts = object dfltsfile()
+    if !this.admdflts.exists(!Admdfltsfile) eq TRUE then
+        !this.admdflts.asignfile(!Admdfltsfile)
+        if !this.admdflts.getdata()[1].eq('') then
+            !this.admdflts.pushdata(!!admtoolsgetdfltsfile())
+            $P ADMTOOLS: 'admintools.ini file looks empty or corrupted, creating default values'
+        endif
+    else
+        !this.admdflts.createdfltsfile(!Admdfltsfile)
+        !this.admdflts.pushdata(!!admtoolsgetdfltsfile())
+            $P ADMTOOLS: 'admintools.ini file not found, creating default values'
+            $P ADMTOOLS: 'Please edit the file to set the correct values' 
+            $P ADMTOOLS: 'File created in: $!this.admdflts.dir'
+    endif
+
+
+
+endmethod
+
+define method .changedesc()
+
+    !!changespecdesc()
+
+endmethod
+
+define method .setpurp()
+
+    !!setpurpofsite()
+
+endmethod
+
+define method .psvboltmeth()
+    
+    !psvbolt = !!createpsvbolt()
+    if !!alert.confirm('Do you want to create the Spec Component too').eq('YES') then
+        !!CE = !psvbolt.dbref()
+        !!psvboltspco()
+    endif
+
+    
+
+endmethod
+
+define method .psvboltspecometh()
+
+    !!psvboltspco()
+
+endmethod
+
+define method .checkident()
+
+    !!Findident(!this.ident.val)
+
+endmethod
+
+define method .reloadform()
+    kill !!admtools
+    show !!admtools
+endmethod
+
+define method .rehash()
+    PML REHASH ALL
+endmethod
+
+define method .launchcustomization()
+
+    !!CustomFix()
+
+endmethod
+
+define method .test()
+
+    !this.admdflts.help()
+
+endmethod

@@ -1,0 +1,13 @@
+define function !!admtoolsgetdfltsfile() is array
+
+    !data = array()
+
+    !data.append('NOTE: DO NOT ADD EXTRA LINES, JUST EDIT INFORMATION BETWIN | |')
+    !data.append('')
+    !data.append('Specifcations DB = |CATADMIN/PROJECT_SPECIFICATION|')
+    !data.append('Catalogue DB = |CATADMIN/PROJECT_CATALOG|')
+
+
+    return !data
+
+endfunction 

@@ -1,0 +1,30 @@
+define function !!tpspecexist(!specx is string) is BOOLEAN
+
+
+    if mat(!specx,'/') EQ 0 then
+        !specx  = '/' + !specx
+    endif
+
+    !Spcheck = !specx.dbref()
+    handle any
+        return FALSE
+    endhandle
+
+    var !allspecs collect all spec with purp of SPWL eq 'SPMA'
+    if !allspecs.size().neq(0) then
+        do !spec values !allspecs
+
+            if !spec.dbref().eq(!specx.dbref()) then
+
+                return TRUE
+            endif
+        enddo
+        
+        return FALSE
+    else 
+        !!alert.error('Spec not found in SPWL with purp SPMA')
+        
+        return false
+
+    endif
+endfunction

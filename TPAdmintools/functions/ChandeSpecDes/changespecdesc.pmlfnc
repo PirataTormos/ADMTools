@@ -1,0 +1,32 @@
+define function !!changespecdesc()
+
+
+
+    if !!CE.type.eq('SPWL') then 
+        var !spec collect all spec for CE
+        !newdesc = !!alert.input('New Description','')
+        if !newdesc.neq('') then
+            !!alert.confirm('OK to change all spec descriptions of $!!CE.name to $!newdesc')
+        elseif !newdesc.eq('') then
+            !!alert.confirm('OK to change all spec descriptions of $!!CE.name to unset')
+        endif
+        do !sp values !spec 
+            if !sp.dbref().name.eq('/*LIMBOSPEC') then 
+                skip
+            endif
+            !sp.dbref().desc = !newdesc
+        enddo        
+    endif
+
+    if !!CE.type.eq('SPEC') then
+
+        !spec = !!CE
+        !!CE.desc = !newdesc
+
+    endif
+
+
+
+
+
+endfunction

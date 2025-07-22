@@ -1,0 +1,45 @@
+-------------------------------------------------------------------
+--
+--  Copyright 2014 to current year. AVEVA Solutions Limited and its subsidiaries. All rights reserved in original code only.
+--
+--  File:            ImportCustomFolder.pmlfnc
+--  Author:          Miguel Barroso
+--  Created:         21-05-2024
+--
+--  Description:  <DESCRIPTION>
+--
+------------------------------------------------------------------------
+define function !!ImportCustomFolder()
+
+  !project = current project
+  !projectcode = !project.code()
+  
+  var !projEvarPath1 evar $!projectcode$nDFLTS
+  !importfolder = !projEvarPath1.replace('DFLTS','SPMat') + '\0_CUSTOMIZATION'
+
+  !folderObj = object file(!importfolder)
+  !folderfiles = !folderObj.files()
+  handle (160,8) $*Folder not found
+    !folderfiles = array()
+      $P ------
+      $P The folder $!importfolder does not exist. 
+      $P All .mac customizations must be in this folder.
+      $P ------
+  endhandle
+
+  if !folderfiles.size().neq(0) then
+
+    do !f values !folderfiles
+        $M /$!f
+        handle (47,15) $*Syntax error
+          SPECONMODE
+          $M /$!f
+          exit
+        elsehandle any
+          $P THE FILE $!f HAS NOT BEEN UPLOADED.
+        endhandle
+    enddo
+
+  endif
+
+endfunction
