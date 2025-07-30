@@ -120,7 +120,41 @@ define method .admtools()
             $P ADMTOOLS: 'File created in: $!this.admdflts.dir'
     endif
 
+    -- Lectura de datos dflts.
+    
+    !this.dfltsdata = !this.admdflts.getdata()
+    !asignsucces = !!vardltsasign(!this.dfltsdata)                                $* Asignacion de dflts a variables globales y capturar bool de resultado
+    
+    -- FAllo en la assignacion de dflts, se debe reconstruir el archivo.
+    !this.rebuilddfltfile(!asignsucces)
+    
+endmethod
 
+define method .rebuilddfltfile(!asignsucces is boolean) 
+
+    -- ESTO EN UN FURO SE PUEDE INCORPORAR A UN METODO DEl OBJETO DFLTSFILE
+    if !asignsucces.eq(FALSE) then
+        !qres = !!alert.question('You have an old admintools.ini file version. Lees lines that expected. $N Yes: Autogenerate new one.             $N No: Display file to save configuration. ')
+        if !qres.eq('YES') then
+            !this.admdflts.pushdata(!!admtoolsgetdfltsfile())
+            $P ADMTOOLS: 'admintools.ini file autogenerating default values'
+            $P ADMTOOLS: 'Please edit the file to set the correct values' 
+            $P ADMTOOLS: 'File created in: $!this.admdflts.dir'
+            !asignsucces = !!vardltsasign(!this.admdflts.getdata())
+            !this.reloadform()
+        elseif !qres.eq('NO') then
+            syscom |start $!<this.admdflts.fileobj>&|
+            if !!alert.confirm('.init file displayed, save your configurations and confirm to rebuild the file').eq('YES') then
+                !this.admdflts.pushdata(!!admtoolsgetdfltsfile())
+                $P ADMTOOLS: 'admintools.ini file autogenerating default values'
+                $P ADMTOOLS: 'Please edit the file to set the correct values' 
+                $P ADMTOOLS: 'File created in: $!this.admdflts.dir'
+                !asignsucces = !!vardltsasign(!this.admdflts.getdata())
+            else 
+                !this.reloadform()
+            endif
+        endif
+    endif 
 
 endmethod
 
