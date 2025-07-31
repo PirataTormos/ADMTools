@@ -173,9 +173,11 @@ endmethod
 define method .psvboltmeth()
     
     !psvbolt = !!createpsvbolt()
-    if !!alert.confirm('Do you want to create the Spec Component too').eq('YES') then
-        !!CE = !psvbolt.dbref()
-        !!psvboltspco()
+    if !psvbolt.neq('') then
+        if !!alert.confirm('Do you want to create the Spec Component too').eq('YES') then
+            !!CE = !psvbolt.dbref()
+            !!psvboltspco()
+        endif
     endif
 
     
