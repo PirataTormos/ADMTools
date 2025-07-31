@@ -1,0 +1,27 @@
+
+-- Last update in verison v0.1.2 with 2 vars
+
+define function !!vardltsasign(!dfltsarray is array) is boolean
+
+    onerror golabel /label1
+
+    if !dfltsarray.size() neq 0 then
+
+        !!ADMSPECDB = !dfltsarray[3].after('|').before('|')
+        !!ADMCATADB = !dfltsarray[4].after('|').before('|')
+        
+
+        return true
+
+    else
+        return false
+    endif
+
+    -- Error handling 
+    label /label1
+    handle (2,752)
+        return false
+    endhandle 
+
+
+endfunction
