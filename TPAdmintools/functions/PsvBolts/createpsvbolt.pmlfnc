@@ -1,11 +1,11 @@
 define function !!createpsvbolt() is string
-
+    !sbolpsv = ''
     if !!CE.type.eq('SBOL') then
+
         if !!CE.namn.split('_')[4].neq('PSV') then
 
             !SBOL = !!CE.namn
             !sbolspl = !sbol.split('_')
-            !sbolpsv = ''
             do !i from 1 to 4 by 1
                 if !i neq 4 then
                     !sbolpsv = !sbolpsv & !sbolspl[!i] & '_'
@@ -15,6 +15,18 @@ define function !!createpsvbolt() is string
             enddo
 
             NEW SBOL COPY PRE NAME $!sbolpsv
+            handle (41,12) $* Name "!sbolpsv" already used
+                delete sbol
+                do !i from 1 to 10
+                    !sbolpsv = !sbolpsv.before('-') + '-$!i'
+                    NEW SBOL COPY PRE NAME $!sbolpsv
+                    handle (41,12)
+                        delete sbol
+                        skip
+                    endhandle
+                    break
+                enddo
+            endhandle 
             
             !!CE.length = !!CE.length + 40
             $P  Length of the bolt increased by 40 mm 
@@ -22,9 +34,11 @@ define function !!createpsvbolt() is string
 
         else
             !!Alert.warning('This is a PSV bolt')
+            return !sbolpsv 
         endif
     else
         !!Alert.warning('Not in a SBOL component')
+        return !sbolpsv
     endif
 
 

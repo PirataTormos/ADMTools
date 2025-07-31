@@ -7,15 +7,16 @@ define function !!psvboltspco()
         if mat(!spec,'/') EQ 0 then
             !spec  = '/' + !spec
         endif
+        !bltref = !!CE.name
+        !bltseq = !bltref
 
         if !!tpspecexist(!spec).eq(TRUE) then
 
-
-            !bltref = !!CE.name
-
-            !nonpsvboltsplit = !!CE.name.split('_')
+            !nonpsvboltsplit = !!CE.name.before('-').split('_')
             !nonpsvbolt = ''
             !tag = !nonpsvboltsplit[4]
+            !seq = !!CE.name.after('-')
+
             do !i from 1 to 5 by 1
                 if !i eq 4 then
                     skip
@@ -29,15 +30,17 @@ define function !!psvboltspco()
                 endif
                 !nonpsvbolt =  !nonpsvbolt & '_'
             enddo
-            !oldspeco = !spec & !nonpsvbolt
+            !oldspeco = !spec & !nonpsvbolt.before('-')
             !!CE = !oldspeco.dbref()
             var !bore answer of owner of owner
             var !stype1 stype 
-            !stype = !stype1 & '_' & !tag
+            !stype = !stype1 & '_' & !tag & !seq
             var !shop 'FALSE'
             var !catref catref
             var !detref detref
             var !bltref $!bltref
+            --!bltref = !bltref + '-$!bltseq'
+            $P $!bltref
 
                 SPECONMODE
                 OLD SPECIFICATION $!spec
@@ -46,6 +49,11 @@ define function !!psvboltspco()
                 DEFAULTS                                                                                                                                                                                                
                 - - - = =   
                 BOLT *$!bltref $!bore TEXT'$!stype' FALSE $!catref $!detref =0 =0 $!bltref
+                handle (17,51)  
+                    $P ADMTOOLS: (17,51) - Spcom name /AA3D/73263_10184_1_PSV_SBOL already exists. New Spcom rejected
+                    !!alert.error('Spcom name /AA3D/73263_10184_1_PSV_SBOL already exists. New Spcom rejected')
+
+                endhandle
                 EXIT
         else       
             !!alert.error('Spec not found')
@@ -55,7 +63,6 @@ define function !!psvboltspco()
         !!alert.error('Wrong element type')
 
     endif
+    !!CE = !bltref.DBREF()
 endfunction
 
-
--- añadir verificaciones de spec y de entrada de bolt (las segunda puede hacerse en el forulario)
