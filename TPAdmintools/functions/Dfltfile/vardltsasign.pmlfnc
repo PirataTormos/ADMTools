@@ -19,7 +19,7 @@ define function !!vardltsasign(!dfltsarray is array) is boolean
 
     -- Error handling 
     label /label1
-    handle (2,752) --
+    handle (2,752)
         return false
     endhandle 
 

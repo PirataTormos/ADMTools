@@ -1,4 +1,12 @@
-setup form !!admtools dialog dock right
+setup form !!admtools resizable 
+
+
+    import 'GridControl'
+	handle ANY
+	endhandle
+	using namespace 'Aveva.Pdms.Presentation'
+	using namespace 'Aveva.CORE.Presentation'
+
 
     -- CONSTRUCTION MEMBERS
 
@@ -18,6 +26,16 @@ setup form !!admtools dialog dock right
 
     -- CONSTRUCTOR
 
+    -- Settings Menu
+    bar
+    !this.bar.add(|Settings|,|FileMenu|)
+
+    !FileMenuObj = !this.newmenu(|FileMenu|)
+    !FileMenuObj.add(|SEPARATOR|)
+    !FileMenuObj.add(|CALLBACK|,|View DFLTS|, |!this.viewdflts()|)
+    ------
+
+
     --!this.callback      = '!this.admtools()'
     !this.cancelCall    = '!this.close()'
     !this.formrevision  = 'V-0.1.2'
@@ -30,7 +48,6 @@ setup form !!admtools dialog dock right
 
     !width = 30
     !width2 = 14
-
 
 
     if !!currentmodule.eq('PARAGON') then
@@ -96,6 +113,7 @@ setup form !!admtools dialog dock right
     -- MEMBERS
     member .admdflts is dfltsfile
     member .dfltsdata is array
+    member .Admdfltsfilename is string
 
 
 exit
@@ -103,17 +121,17 @@ exit
 define method .admtools()
 
     -- Asignar archivo dflts.
-    !Admdfltsfile = 'admintools.ini'
+    !this.Admdfltsfilename = 'admintools.ini'
 
     !this.admdflts = object dfltsfile()
-    if !this.admdflts.exists(!Admdfltsfile) eq TRUE then
-        !this.admdflts.asignfile(!Admdfltsfile)
+    if !this.admdflts.exists(!this.Admdfltsfilename) eq TRUE then
+        !this.admdflts.asignfile(!this.Admdfltsfilename)
         if !this.admdflts.getdata()[1].eq('') then
             !this.admdflts.pushdata(!!admtoolsgetdfltsfile())
             $P ADMTOOLS: 'admintools.ini file looks empty or corrupted, creating default values'
         endif
     else
-        !this.admdflts.createdfltsfile(!Admdfltsfile)
+        !this.admdflts.createdfltsfile(!this.Admdfltsfilename)
         !this.admdflts.pushdata(!!admtoolsgetdfltsfile())
             $P ADMTOOLS: 'admintools.ini file not found, creating default values'
             $P ADMTOOLS: 'Please edit the file to set the correct values' 
@@ -215,4 +233,13 @@ define method .test()
 
     !this.admdflts.help()
 
+endmethod
+
+define method .viewdflts()
+
+    if !this.admdflts.exists(!this.Admdfltsfilename) eq TRUE then
+        syscom |start $!<this.admdflts.fileobj>&|
+    else
+        !!alert.error('admintools.ini file not found. Reload Form to create it.')
+    endif
 endmethod
