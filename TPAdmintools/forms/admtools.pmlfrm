@@ -80,12 +80,7 @@ setup form !!admtools resizable
 
         exit
 
-        frame .GetWorkframe 'GetWork'
 
-            button .GetWorkSpec 'GetWork Spec' width 14
-            button .GetWorkCata 'GetWork Cata' at xmax.GetWorkSpec +1 ymin.GetWorkSpec width 14
-
-        exit
 
 
     endif
@@ -95,6 +90,13 @@ setup form !!admtools resizable
         frame .desfunctions '3D Organization'
 
             button .setpurpbutt 'Set Purp' width $!width callback '!this.setpurp()'
+
+        exit
+
+        frame .GetWorkframe 'GetWork'
+
+            button .GetWorkSpec 'GetWork Spec' width 14 callback '!this.getworks(|SPEC|)'
+            button .GetWorkCata 'GetWork Cata' at xmax.GetWorkSpec +1 ymin.GetWorkSpec width 14 callback '!this.getworks(|CATA|)'
 
         exit
 
@@ -242,4 +244,24 @@ define method .viewdflts()
     else
         !!alert.error('admintools.ini file not found. Reload Form to create it.')
     endif
+endmethod
+
+define method .getworks(!type is string)
+
+    if !type.eq('SPEC') then
+        GETWORK $!!ADMSPECDB
+        handle (69,87)
+            !!alert.error('Error getting work from Spec DB: ' + !!admspecdb)
+            $P ADMTOOLS: DB not found or not accessible, please check your configuration in admintools.ini
+        endhandle
+    elseif !type.eq('CATA') then
+        getwork $!!ADMCATADB
+        handle (69,87)
+            !!alert.error('Error getting work from Spec DB: ' + !!admcatadb)
+            $P ADMTOOLS: DB not found or not accessible, please check your configuration in admintools.ini
+        endhandle        
+    else
+        !!alert.error('Invalid type for GetWork: ' + !type)
+    endif
+
 endmethod
