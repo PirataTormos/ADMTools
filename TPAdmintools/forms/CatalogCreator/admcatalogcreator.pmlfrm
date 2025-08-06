@@ -1,0 +1,52 @@
+import 'MarApi'
+handle (1000,0)
+endhandle
+
+
+setup form !!admcatalogcreator VarChars
+
+    using namespace 'Aveva.Pdms.Presentation'
+    !this.formtitle = 'Catalog Creator'
+
+        HALIGN centre
+    LINE .divisio0 horizontal width 22
+    path down
+    vdist 0.2
+
+    PARA .titolcata text |Catalogue Creator|
+
+    LINE .divisio horizontal width 22
+
+    button .createCATAInstruments 'INSTRUMENTS' width 20 callback '!this.createcataintruments()'
+    button .createCATAAtt 'ATTA' width 20 callback '!this.creacataatt()'
+    button .createCATAPSV 'PSV' width 20 callback '!this.createcatapsv()'
+
+    LINE .divisio1 horizontal width 22
+
+
+exit
+
+define method .admcatalogcreator()
+
+    
+
+endmethod
+
+define method .createcataintruments()
+
+    !!admcatacreatorinst()
+
+endmethod
+
+define method .creacataatt()
+
+    !!admCataCreatorAtta()
+
+endmethod
+
+define method .createcatapsv()
+
+    !!admCataCreatorPSV()
+
+endmethod
+
