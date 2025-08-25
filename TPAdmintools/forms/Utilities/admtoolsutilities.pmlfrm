@@ -1,0 +1,29 @@
+
+handle (1000,0)
+endhandle
+
+
+setup form !!admtoolsutilities resizable
+
+
+    !this.formtitle = 'Utilities'
+
+    frame .utilities 'Utilities'
+        button .butqatt 'Q ATT' width 10 length 2.5 callback 'Q ATT'
+        path right 
+        button .butqspref 'Q SPREF' width 10 length 2.5 callback 'Q SPREF'
+        path down
+        button .butqbltref 'Q BLTREF' width 10 length 2.5 callback 'Q BLTREF'
+        path left
+        button .butqenglnk 'Q ENGLNK' width 10 length 2.5 callback 'Q ENGLNK'
+        path down 
+        button .butisostat 'ISO STATUS' width 10 length 2.5 callback 'q :720005ISOSTATUS \:CpipesPIPE[1] OF ENGLNK OF CMPLNK OF PIPE'
+    exit
+exit
+
+
+define method .admtoolsutilities()
+
+    
+
+endmethod
