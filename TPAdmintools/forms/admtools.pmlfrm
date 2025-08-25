@@ -80,9 +80,6 @@ setup form !!admtools resizable
 
         exit
 
-
-
-
     endif
 
     if !!currentmodule.eq('DESIGN') then
@@ -108,11 +105,15 @@ setup form !!admtools resizable
         button .exit 'Reload form' width $!width2 callback '!this.reloadform()'
         button .butrehash 'PML Rehash All' width $!width2 callback '!this.rehash()'
         path down 
-        button .test 'test' width $!width2 callback '!this.test()'
+        button .utilities 'Utilities' width $!width2 callback 'show !!admtoolsutilities'
         path left
         button .cataloguecreator 'Catalogue Creator' width $!width2 callback 'show !!admcatalogcreator'
+
     exit
 
+
+
+    
     -- MEMBERS
     member .admdflts is dfltsfile
     member .dfltsdata is array
