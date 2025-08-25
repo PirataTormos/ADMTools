@@ -8,7 +8,7 @@ setup form !!admcatalogcreator VarChars
     using namespace 'Aveva.Pdms.Presentation'
     !this.formtitle = 'Catalog Creator'
 
-        HALIGN centre
+    HALIGN centre
     LINE .divisio0 horizontal width 22
     path down
     vdist 0.2
@@ -21,8 +21,11 @@ setup form !!admcatalogcreator VarChars
     button .createCATAAtt 'ATTA' width 20 callback '!this.creacataatt()'
     button .createCATAPSV 'PSV' width 20 callback '!this.createcatapsv()'
 
-    LINE .divisio1 horizontal width 22
+    LINE .divisio1 horizontal width 22 lines 0.5
 
+    button .createallcata 'Create All CATA' width 20 callback '!this.creaallcatas()'
+
+    LINE .divisio2 horizontal width 22
 
 exit
 
@@ -34,19 +37,60 @@ endmethod
 
 define method .createcataintruments()
 
-    !!admcatacreatorinst()
+    -- Imput beggin type CATA
+
+    if !!CE.type.neq('CATA') then
+        !!alert.error('You must be in a CATA type to use this tool. Instuments can only be created in a CATA type.')
+    elseif !!CE.type.eq('CATA') then
+        !!admcatacreatorinst()
+        handle (41,12) $* Nombre exisitente
+            !!alert.error('INSTRUMENTS cata name already exists.')
+            delete cata
+        endhandle
+    endif
 
 endmethod
 
 define method .creacataatt()
 
-    !!admCataCreatorAtta()
+    -- Imput beggin type CATA
+
+    if !!CE.type.neq('CATA') then
+        !!alert.error('You must be in a CATA type to use this tool. ATTA can only be created in a CATA type.')
+    elseif !!CE.type.eq('CATA') then
+        !!admCataCreatorAtta()
+        handle (41,12) $* Nombre exisitente
+            !!alert.error('ATTA cata name already exists.')
+        endhandle
+    endif
 
 endmethod
 
 define method .createcatapsv()
 
-    !!admCataCreatorPSV()
+    -- Imput beggin type SECT
+    if !!CE.type.neq('SECT') and !!CE.type.neq('CATA') then
+        !!alert.error('You must be in a SECT or CATA type to use this tool. PSV can only be created in a SECT type.')
+    elseif !!CE.type.eq('SECT') or !!CE.type.eq('CATA') then
+        !!admCataCreatorPSV()
+        handle (41,12) $* Nombre exisitente
+            !!alert.error('PSV sect name already exists.')
+            delete sect
+        endhandle
+    endif
+
+
+endmethod
+
+define method .creaallcatas()
+
+    -- Imput beggin type CATA
+    !this.createcataintruments()
+        !CEinst = !!CE.owne.owne.owne.name
+    !!CE = !CEinst.dbref()
+    !this.creacataatt()
+    !!CE = !CEinst.dbref()
+    !this.createcatapsv()
 
 endmethod
 
