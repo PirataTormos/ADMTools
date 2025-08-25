@@ -109,7 +109,8 @@ setup form !!admtools resizable
         button .butrehash 'PML Rehash All' width $!width2 callback '!this.rehash()'
         path down 
         button .test 'test' width $!width2 callback '!this.test()'
-
+        path left
+        button .cataloguecreator 'Catalogue Creator' width $!width2 callback 'show !!admcatalogcreator'
     exit
 
     -- MEMBERS
@@ -232,8 +233,9 @@ define method .launchcustomization()
 endmethod
 
 define method .test()
+    kill !!admcatalogcreator
 
-    !this.admdflts.help()
+    show !!admcatalogcreator
 
 endmethod
 
