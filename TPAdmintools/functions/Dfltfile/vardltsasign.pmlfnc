@@ -9,7 +9,7 @@ define function !!vardltsasign(!dfltsarray is array) is boolean
 
         !!ADMSPECDB = !dfltsarray[3].after('|').before('|')
         !!ADMCATADB = !dfltsarray[4].after('|').before('|')
-        
+        !!ADMCUSTOMFUNCTIONS = !dfltsarray[5].after('|').before('|')
 
         return true
 

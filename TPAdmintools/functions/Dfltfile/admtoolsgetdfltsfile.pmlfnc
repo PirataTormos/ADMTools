@@ -6,6 +6,7 @@ define function !!admtoolsgetdfltsfile() is array
     !data.append('')
     !data.append('Specifcations DB = |CATADMIN/PROJECT_SPECIFICATION|                   Assigned to Global Variable =  !!ADMSPECDB')
     !data.append('Catalogue DB = |CATADMIN/PROJECT_CATALOG|                             Assigned to Global Variable =  !!ADMCATADB')
+    !data.append('Customization functions = |!!customfunction1();show !!dimtransfer|   Assigned to Global Variable =  !!ADMCUSTOMFUNCTIONS')
 
 
     return !data

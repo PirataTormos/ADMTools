@@ -12,7 +12,26 @@
 define function !!CustomFix()
 
   !!ImportCustomFolder()
-  !!CaltalogWeight()
 
+
+
+  -- Custom Functions
+
+  
+
+  !functionsstring = string()
+  !functionsstring = !!ADMCUSTOMFUNCTIONS
+
+  !functionarray = array()
+  !functionarray = !functionsstring.split(';')
+
+  do !function values !functionarray
+
+    CALL $!function
+    handle (47,15) $* Syntax error
+      !!alert.error('Error occurred while calling custom function: $!function        Just functions accepted')
+    endhandle
+
+  enddo
 
 endfunction
