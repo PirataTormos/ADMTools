@@ -1,0 +1,32 @@
+--|------------------------------------------------------------------------------------------------
+--|
+--|
+--| Copyright 2026 to current year. Company Name. All rights reserved.
+--|
+--|
+--| Other copyright Information goes here!
+--|
+--| Author: <First Last>
+--| Date: "2026-02-11"
+--| Filename: "xlsReaderToCsv.pmlfnc"
+--|
+--|------------------------------------------------------------------------------------------------
+
+
+define function !!readXlsToCsv(!filepath is string) is array
+
+    !ps1path = !!pml.getPathName(LowCase('readXlsToCsv.pmlfnc')).replace('/','\')
+    !ps2path = !ps1path.split('1')[1] + ('1\ConvertXlsxToCsv.ps1')
+    
+
+    syscom | powershell -ExecutionPolicy Bypass -File "$!ps2path" -XlsxPath "$!filepath"|
+
+    $P $!filepath
+    !filepathcsv = !filepath.replace('.xlsx','.csv')
+    !file = object file(!filepathcsv)
+    !content = !file.readfile()
+    !file.deletefile()
+
+    return !content
+    
+endfunction
