@@ -15,18 +15,34 @@
 
 define function !!readXlsToCsv(!filepath is string) is array
 
-    !ps1path = !!pml.getPathName(LowCase('readXlsToCsv.pmlfnc')).replace('/','\')
-    !ps2path = !ps1path.split('1')[1] + ('1\ConvertXlsxToCsv.ps1')
-    
+    !content = array()
+    do !i from 1 to 1
+        !ps1path = !!pml.getPathName(LowCase('readXlsToCsv.pmlfnc')).replace('/','\')
+            handle (44,33)
+                !!alert.error('ReadXlsToCSV: Fallo en encontrar script, revisa nombres de esta funcion.')
+                break
+            endhandle 
+        !ps2path = !ps1path.split('1')[1] + ('1\ConvertXlsxToCsv.ps1')
+            handle (44,33)
+                !!alert.error('ReadXlsToCSV: Fallo en encontrar script, revisa nombres de esta funcion.')
+                break
+            endhandle
+        
+        do !z from 1 to 1
+            syscom | powershell -ExecutionPolicy Bypass -File "$!ps2path" -XlsxPath "$!filepath"|
+            !filepathcsv = !filepath.replace('.xlsx','.csv')
+            !file = object file(!filepathcsv)
+            !content = !file.readfile()
+            handle any
+                !!alert.error('Unable to read xlsx file')
+                break
+            endhandle            
+            !file.deletefile()
+            return !content
+        enddo
+    enddo
 
-    syscom | powershell -ExecutionPolicy Bypass -File "$!ps2path" -XlsxPath "$!filepath"|
-
-    $P $!filepath
-    !filepathcsv = !filepath.replace('.xlsx','.csv')
-    !file = object file(!filepathcsv)
-    !content = !file.readfile()
-    !file.deletefile()
-
+    !content[1] = 'No data loaded'
     return !content
     
 endfunction
